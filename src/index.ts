@@ -1,6 +1,8 @@
 import { MatchReader } from './MatchReader';
 import { CsvFileReader } from './CsvFileReader';
-import { MatchResult } from './MatchResults';
+import { ConsoleReport } from './reportTargets/ConsoleReports';
+import { WinsAnalysis } from './analyzers/WinsAnalaysis';
+import { Summary } from './Summary';
 
 /**
  * Inheritance: Characterized by an 'IS A' relationship between two classes
@@ -18,16 +20,9 @@ const csvFileReader = new CsvFileReader('football.csv');
 const matchReader = new MatchReader(csvFileReader);
 matchReader.load();
 
-let manUnitedWins = 0;
+const summary = new Summary(
+  new WinsAnalysis('Man United'),
+  new ConsoleReport()
+);
 
-for (let match of matchReader.matches) {
-  if (match[1] === 'Man United' && match[5] === MatchResult.HomeWin) {
-    // won as local
-    manUnitedWins++;
-  } else if (match[2] === 'Man United' && match[5] === MatchResult.AwayWin) {
-    // won as visitor
-    manUnitedWins++;
-  }
-}
-
-console.info(`Man United won ${manUnitedWins} games`);
+summary.buildAndPrintReport(matchReader.matches);
